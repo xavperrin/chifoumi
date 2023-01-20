@@ -2,7 +2,7 @@ const startBtn=document.querySelector('#start');
 const rockBtn=document.querySelector('#rock');
 const paperBtn=document.querySelector('#paper');
 const scissorsBtn=document.querySelector('#scissors');
-
+const logResults=document.querySelector('#log-results');
  
 const rockLight=document.querySelector('#rock-cpu');
 const paperLight=document.querySelector('#paper-cpu');
@@ -71,15 +71,24 @@ const getComputerChoice=()=>{
 
     if(computerSelection===playerSelection){
         document.body.style.backgroundColor="#ffffff";
+        const resultItem = document.createElement("li");
+        resultItem.innerHTML = '<i class="fas fa-equals"></i> <span style="font-family: monospace;" >draw</span>';
+        logResults.prepend(resultItem);
         return result.textContent='draw';
 
     }
     else if(playerSelection===PAPER && computerSelection===SCISSORS||playerSelection===SCISSORS && computerSelection===ROCK){
         document.body.style.backgroundColor="#FE2F60";
-        return result.textContent='Computer win.';
+        const resultItem = document.createElement("li");
+        resultItem.innerHTML ='<i class="fas fa-robot"></i> <span style="font-family: monospace;" >Computer wins</span>';
+        logResults.prepend(resultItem);
+        return result.textContent='Computer wins.';
     }
     else{
         document.body.style.backgroundColor="#82C00F";
+        const resultItem = document.createElement("li");
+        resultItem.innerHTML = '<i class="fas fa-hand-peace"></i> <span style="font-family: monospace;" >You win</span>';
+        logResults.prepend(resultItem);
         return result.textContent='You win.';
     }
 
