@@ -16,6 +16,13 @@ const choiceEnumeration=[ROCK, PAPER, SCISSORS];
 let gameIsRunning=false;
 const result=document.querySelector('.result');
 
+// Cacher tous les boutons au démarrage
+rockLight.style.display = "hidden";
+paperLight.style.display = "hidden";
+scissorsLight.style.display = "hidden";
+
+
+
 const getRandomChoice=()=>{
     const randomNumber=Math.floor(Math.random()*choiceEnumeration.length);
     console.log('random number:', randomNumber)
@@ -23,10 +30,12 @@ const getRandomChoice=()=>{
 }
 
 const getPlayerChoice=(event)=>{
+    
     try{
         console.log(typeof event.srcElement.id.toUpperCase());
     let choice=event.srcElement.id.toUpperCase();
-     if(choice!==ROCK && choice!==PAPER && choice !==SCISSORS ){
+
+     if(!choiceEnumeration.includes(choice)){
         choice=getRandomChoice();
     }
     else{
@@ -46,30 +55,31 @@ const getComputerChoice=()=>{
    return choiceEnumeration[getRandomChoice()];
 }
  const launchRound=(event)=>{
-    
+    scissorsLight.style.visibility='hidden';
+    paperLight.style.visibility='hidden';
+    rockLight.style.visibility='hidden';
+
     const computerSelection= getComputerChoice();
     const playerSelection=getPlayerChoice(event);
 
     switch(computerSelection){
         case ROCK:
-            scissorsLight.style.visibility='hidden';
             rockLight.style.visibility='visible';
-            paperLight.style.visibility='hidden';
             break;
         case PAPER:
-            scissorsLight.style.visibility='hidden';
-            rockLight.style.visibility='hidden';
             paperLight.style.visibility='visible';
             break;
         case SCISSORS:
             scissorsLight.style.visibility='visible';
-            rockLight.style.visibility='hidden';
-            paperLight.style.visibility='hidden';
             break;
 
     }
 
-    if(computerSelection===playerSelection){
+    let isDraw=()=>{
+       return computerSelection===playerSelection;
+    }
+
+    if(isDraw()){
         document.body.style.backgroundColor="#ffffff";
         const resultItem = document.createElement("li");
         resultItem.innerHTML = '<i class="fas fa-equals"></i> <span style="font-family: monospace;" >draw</span>';
@@ -91,9 +101,6 @@ const getComputerChoice=()=>{
         logResults.prepend(resultItem);
         return result.textContent='You win.';
     }
-
-    
-
 };
 
 
