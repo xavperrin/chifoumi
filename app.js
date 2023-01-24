@@ -3,7 +3,6 @@ const rockBtn=document.querySelector('#rock');
 const paperBtn=document.querySelector('#paper');
 const scissorsBtn=document.querySelector('#scissors');
 const logResults=document.querySelector('#log-results');
- 
 const rockLight=document.querySelector('#rock-cpu');
 const paperLight=document.querySelector('#paper-cpu');
 const scissorsLight=document.querySelector('#scissors-cpu');
@@ -23,7 +22,7 @@ scissorsLight.style.display = "hidden";
 
 
 
-const getRandomChoice=()=>{
+function getRandomChoice(){
     const randomNumber=Math.floor(Math.random()*choiceEnumeration.length);
     console.log('random number:', randomNumber)
     return randomNumber;
