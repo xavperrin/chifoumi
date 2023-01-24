@@ -10,23 +10,22 @@ const scissorsLight=document.querySelector('#scissors-cpu');
 const ROCK='ROCK';
 const PAPER ='PAPER';
 const SCISSORS ='SCISSORS';
+
+let computerChoice;
+let playerChoice;
+
+
 const DEFAULT_CHOICE=ROCK;
 const choiceEnumeration=[ROCK, PAPER, SCISSORS];
-let gameIsRunning=false;
-const result=document.querySelector('.result');
 
-// Cacher tous les boutons au démarrage
-rockLight.style.display = "hidden";
-paperLight.style.display = "hidden";
-scissorsLight.style.display = "hidden";
+const resultDisplay=document.querySelector('.result');
 
 
 
 function getRandomChoice(){
     const randomNumber=Math.floor(Math.random()*choiceEnumeration.length);
-    console.log('random number:', randomNumber)
     return randomNumber;
-}
+} 
 
 const getPlayerChoice=(event)=>{
     
@@ -48,58 +47,117 @@ const getPlayerChoice=(event)=>{
     }
 }
 
+function hideComputerChoice(){
+    // Cacher tous les boutons au démarrage
+    scissorsLight.style.visibility='hidden';
+    paperLight.style.visibility='hidden';
+    rockLight.style.visibility='hidden';
+}
+
+function displayComputerChoice(choice){
+    switch(choice){
+    case ROCK:
+    rockLight.style.visibility='visible';
+    break;
+    case PAPER:
+    paperLight.style.visibility='visible';
+    break;
+    case SCISSORS:
+    scissorsLight.style.visibility='visible';
+    break;
+    }
+}
+
+function updateRoundResult(computer, player){
+    let roundResult;
+    if(computer === player){
+        roundResult = "draw";
+    }
+    else if(player === PAPER && computer === SCISSORS||player === SCISSORS && computer === ROCK){
+        roundResult = "computer wins";
+    }
+    else{
+        roundResult = "you win";
+    }
+    return roundResult;
+}
+function getBackgroundColor(result){
+    const DRAW_COLOR='#ffffff';
+    const COMPUTER_WINS_COLOR='#FE2F60';
+    const PLAYER_WINS_COLOR='#82C00F';
+
+    if(!result){
+        console.log("result falsy : null or not define.", typeof result);
+        return;
+    }
+
+    if(result==='draw'){
+        return DRAW_COLOR;
+        
+    }
+    else if(result==='computer wins'){
+       return COMPUTER_WINS_COLOR;
+    }
+    else{
+       return PLAYER_WINS_COLOR;
+    }
+}
+
+function getLogInnerItem(result){
+    
+    let innerItem;
+    if(!result){
+        console.log("result falsy : null or not define.", typeof result);
+        
+        return;
+    }
+    if(result==='draw'){
+        innerItem=`<i class="fas fa-equals"></i> <span style="font-family: monospace;" >${result}</span>`;
+        
+    }
+    else if(result==='computer wins'){
+        innerItem= `<i class="fas fa-robot"></i> <span style="font-family: monospace;" >${result}</span>`;
+    }
+    else{
+        innerItem= `<i class="fas fa-hand-peace"></i> <span style="font-family: monospace;" >${result}</span>`;
+    }
+
+    console.log(innerItem);
+
+    return innerItem;
+
+}
+
+function displayBackgroundColor(backgroundColor){
+    document.body.style.backgroundColor=backgroundColor;
+}
+
+
+function updateResultView(result){
+    resultDisplay.textContent=result;
+}
 
 const getComputerChoice=()=>{
 
    return choiceEnumeration[getRandomChoice()];
 }
  const launchRound=(event)=>{
-    scissorsLight.style.visibility='hidden';
-    paperLight.style.visibility='hidden';
-    rockLight.style.visibility='hidden';
+let roundResult;
 
-    const computerSelection= getComputerChoice();
-    const playerSelection=getPlayerChoice(event);
+    hideComputerChoice();
 
-    switch(computerSelection){
-        case ROCK:
-            rockLight.style.visibility='visible';
-            break;
-        case PAPER:
-            paperLight.style.visibility='visible';
-            break;
-        case SCISSORS:
-            scissorsLight.style.visibility='visible';
-            break;
+    computerChoice= getComputerChoice();
+    playerChoice=getPlayerChoice(event);
 
-    }
+    displayComputerChoice(computerChoice);
 
-    let isDraw=()=>{
-       return computerSelection===playerSelection;
-    }
-
-    if(isDraw()){
-        document.body.style.backgroundColor="#ffffff";
-        const resultItem = document.createElement("li");
-        resultItem.innerHTML = '<i class="fas fa-equals"></i> <span style="font-family: monospace;" >draw</span>';
-        logResults.prepend(resultItem);
-        return result.textContent='draw';
-
-    }
-    else if(playerSelection===PAPER && computerSelection===SCISSORS||playerSelection===SCISSORS && computerSelection===ROCK){
-        document.body.style.backgroundColor="#FE2F60";
-        const resultItem = document.createElement("li");
-        resultItem.innerHTML ='<i class="fas fa-robot"></i> <span style="font-family: monospace;" >Computer wins</span>';
-        logResults.prepend(resultItem);
-        return result.textContent='Computer wins.';
-    }
-    else{
-        document.body.style.backgroundColor="#82C00F";
-        const resultItem = document.createElement("li");
-        resultItem.innerHTML = '<i class="fas fa-hand-peace"></i> <span style="font-family: monospace;" >You win</span>';
-        logResults.prepend(resultItem);
-        return result.textContent='You win.';
-    }
+    roundResult= updateRoundResult(computerChoice, playerChoice);
+    displayComputerChoice(computerChoice);
+    updateResultView(roundResult);
+    displayBackgroundColor(getBackgroundColor(roundResult));
+    const resultItem = document.createElement("li");
+    resultItem.innerHTML=getLogInnerItem(roundResult);
+    logResults.prepend(resultItem);
 };
 
 
