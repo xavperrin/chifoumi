@@ -14,6 +14,18 @@ const DEFAULT_CHOICE=ROCK;
 
 const CHOICE=[ROCK, PAPER, SCISSORS];
 
+/**
+ * @constant COLOR
+ * @property {string} DRAW - The color code for a draw result.
+ * @property {string} COMPUTER_WINS - The color code for a computer win result.
+ * @property {string} PLAYER_WINS - The color code for a player win result.
+ */
+const COLOR = {
+    DRAW : '#ffffff',
+    COMPUTER_WINS : '#FE2F60',
+    PLAYER_WINS : '#82C00F'
+  }
+
 
 const resultDisplay=document.querySelector('.result');
 
@@ -87,10 +99,10 @@ class GameModel{
 static getRoundResult(computer, player){
     let roundResult;
     if(!computer){
-        throw new Error("computer choice is falsy");
+        throw new Error("computer choice is falsy", typeof computer);
     }
     if(!player){
-        throw new Error("player choice is falsy");
+        throw new Error("player choice is falsy", typeof player);
     }
     if(computer === player){
         roundResult = "draw";
@@ -107,10 +119,13 @@ static getRoundResult(computer, player){
     return roundResult;
 }
 }
+/**
+ * @function getBackgroundColor
+ * @param {string} result - The result of a round. Can be 'draw', 'computer wins', or 'you win'
+ * @returns {string} colorCode - The color code corresponding to the round result.
+ */
 function getBackgroundColor(result){
-    const DRAW_COLOR='#ffffff';
-    const COMPUTER_WINS_COLOR='#FE2F60';
-    const PLAYER_WINS_COLOR='#82C00F';
+
 
     if(!result){
         console.log("result falsy : null or not defined.", typeof result);
@@ -118,14 +133,14 @@ function getBackgroundColor(result){
     }
 
     if(result==='draw'){
-        return DRAW_COLOR;
+        return COLOR.DRAW;
         
     }
     else if(result==='computer wins'){
-       return COMPUTER_WINS_COLOR;
+       return COLOR.COMPUTER_WINS;
     }
     else{
-       return PLAYER_WINS_COLOR;
+       return COLOR.PLAYER_WINS;
     }
 }
 
