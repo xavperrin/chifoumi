@@ -27,6 +27,7 @@ function getRandomChoice(){
     return randomNumber;
 } 
 
+
 const getPlayerChoice=(event)=>{
     
     try{
@@ -70,14 +71,25 @@ function displayComputerChoice(choice){
 
 function updateRoundResult(computer, player){
     let roundResult;
+    if(!computer){
+        console.log("computer choice falsy", computer);
+        return;
+    }
+    if(!player){
+        console.log("player choice falsy", player);
+        return;
+    }
     if(computer === player){
         roundResult = "draw";
     }
-    else if(player === PAPER && computer === SCISSORS||player === SCISSORS && computer === ROCK){
+    else if(player === PAPER && computer === SCISSORS||player === SCISSORS && computer === ROCK || player === ROCK && computer === PAPER ){
         roundResult = "computer wins";
     }
-    else{
+    else if(player === SCISSORS && computer === PAPER || player === ROCK && computer === SCISSORS || player === PAPER && computer === ROCK ){
         roundResult = "you win";
+    }
+    else {
+        console.log("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
     }
     return roundResult;
 }
