@@ -9,8 +9,24 @@ describe("app.js", ()=>{
                 }
             });
         });
-
     });
+
+    describe('PlayerModel', () => {
+        describe('getChoice', () => {
+          it('should return the player choice in uppercase', () => {
+            const event = { target: { id: 'rock' } };
+            const expectedChoice = 'ROCK';
+            const choice = PlayerModel.getChoice(event);
+            expect(choice).toEqual(expectedChoice);
+          });
+      
+          it('should throw an error if there is an error retrieving the player choice', () => {
+            const event = { target: {} };
+            const errorMessage = `Cannot read property id of undefined`;
+            expect(() => PlayerModel.getChoice(event)).toThrowError(errorMessage);
+          });
+        });
+      });
 
     describe("GameModel", ()=>{
         describe('getRoundResult', () => {
@@ -41,5 +57,38 @@ describe("app.js", ()=>{
               });
             });
 
+            describe('getBackgroundColor', () => {
+                it('should return the color code for a draw result', () => {
+                  const result = 'draw';
+                  const expectedColor = COLOR.DRAW;
+                  const color = GameModel.getBackgroundColor(result);
+                  expect(color).toEqual(expectedColor);
+                });
+              
+                it('should return the color code for a computer win result', () => {
+                  const result = 'computer wins';
+                  const expectedColor = COLOR.COMPUTER_WINS;
+                  const color = GameModel.getBackgroundColor(result);
+                  expect(color).toEqual(expectedColor);
+                });
+              
+                it('should return the color code for a player win result', () => {
+                  const result = 'you win';
+                  const expectedColor = COLOR.PLAYER_WINS;
+                  const color = GameModel.getBackgroundColor(result);
+                  expect(color).toEqual(expectedColor);
+                });
+              
+                it('should throw an error if result is falsy', () => {
+                    const result = null;
+                    const errorMessage = 'result falsy : null or not defined.';
+                    expect(() => GameModel.getBackgroundColor(result)).toThrowError(errorMessage);
+                  });
+              });   
 });
+
+
+
+
+
 })

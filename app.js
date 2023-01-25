@@ -36,7 +36,7 @@ class PlayerModel{
  * @returns {string} choice - The player's choice in uppercase
  * @throws {Error} if there is an error retrieving the player's choice
  */
-    static getPlayerChoice=(event)=>{
+    static getChoice=(event)=>{
     
         try{
             console.log(typeof event.target.id.toUpperCase());
@@ -50,6 +50,7 @@ class PlayerModel{
         }
         catch(error){
             console.error(error);
+            throw new Error(`Cannot read property id of undefined`);
         }
     }
 }
@@ -61,32 +62,15 @@ class ComputerModel{
         const randomNumber=Math.floor(Math.random()*CHOICE.length);
         return randomNumber;
     } 
-    static getComputerChoice=()=>{
+    static getChoice=()=>{
        
         return CHOICE[this.getRandomChoice()];
     }
 }
 
-function hideComputerChoice(){
-    // Cacher tous les boutons au démarrage
-    scissorsLight.style.visibility='hidden';
-    paperLight.style.visibility='hidden';
-    rockLight.style.visibility='hidden';
-}
 
-function displayComputerChoice(choice){
-    switch(choice){
-    case ROCK:
-    rockLight.style.visibility='visible';
-    break;
-    case PAPER:
-    paperLight.style.visibility='visible';
-    break;
-    case SCISSORS:
-    scissorsLight.style.visibility='visible';
-    break;
-    }
-}
+
+
 class GameModel{
 /**
      * @function getRoundResult
@@ -97,86 +81,118 @@ class GameModel{
      */  
 
 static getRoundResult(computer, player){
-    let roundResult;
-    if(!computer){
-        throw new Error("computer choice is falsy", typeof computer);
+        let roundResult;
+        if(!computer){
+            throw new Error("computer choice is falsy", typeof computer);
+        }
+        if(!player){
+            throw new Error("player choice is falsy", typeof player);
+        }
+        if(computer === player){
+            roundResult = "draw";
+        }
+        else if(player === PAPER && computer === SCISSORS||player === SCISSORS && computer === ROCK || player === ROCK && computer === PAPER ){
+            roundResult = "computer wins";
+        }
+        else if(player === SCISSORS && computer === PAPER || player === ROCK && computer === SCISSORS || player === PAPER && computer === ROCK ){
+            roundResult = "you win";
+        }
+        else {
+            console.error("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
+        }
+        return roundResult;
     }
-    if(!player){
-        throw new Error("player choice is falsy", typeof player);
-    }
-    if(computer === player){
-        roundResult = "draw";
-    }
-    else if(player === PAPER && computer === SCISSORS||player === SCISSORS && computer === ROCK || player === ROCK && computer === PAPER ){
-        roundResult = "computer wins";
-    }
-    else if(player === SCISSORS && computer === PAPER || player === ROCK && computer === SCISSORS || player === PAPER && computer === ROCK ){
-        roundResult = "you win";
-    }
-    else {
-        console.error("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
-    }
-    return roundResult;
-}
-}
-/**
+
+    /**
  * @function getBackgroundColor
  * @param {string} result - The result of a round. Can be 'draw', 'computer wins', or 'you win'
  * @returns {string} colorCode - The color code corresponding to the round result.
+ * @throws {Error} if result round is falsy
  */
-function getBackgroundColor(result){
-
-
-    if(!result){
-        console.log("result falsy : null or not defined.", typeof result);
-        return;
-    }
-
-    if(result==='draw'){
-        return COLOR.DRAW;
-        
-    }
-    else if(result==='computer wins'){
-       return COLOR.COMPUTER_WINS;
-    }
-    else{
-       return COLOR.PLAYER_WINS;
+   static getBackgroundColor(result){
+        if(!result){
+            throw new Error("result falsy : null or not defined.", typeof result);
+        }
+        switch(result){
+            case 'draw':
+                return COLOR.DRAW;
+                break;
+            case 'computer wins':
+                return COLOR.COMPUTER_WINS;
+                break;
+            case 'you win':
+                return COLOR.PLAYER_WINS;
+                break;
+            default:
+                throw new Error("Unexpected result value", result);
+        }
     }
 }
 
-function getLogInnerItem(result){
+function    hideComputerChoice(){
+        // Cacher tous les boutons au démarrage
+        scissorsLight.style.visibility='hidden';
+        paperLight.style.visibility='hidden';
+        rockLight.style.visibility='hidden';
+    }
+
+    function  displayComputerChoice(choice){
+
+        switch(choice){
+        case ROCK:
+        rockLight.style.visibility='visible';
+        break;
+        case PAPER:
+        paperLight.style.visibility='visible';
+        break;
+        case SCISSORS:
+        scissorsLight.style.visibility='visible';
+        break;
+        }
+    }
+
+    function getLogInnerItem(result){
     
-    let innerItem;
-    if(!result){
-        console.log("result falsy : null or not define.", typeof result);
+        let innerItem;
+        let fontAwesomeIcon;
+    
         
-        return;
+        if(!result){
+            throw new Error("result falsy : null or not defined.", typeof result);
+        }
+        switch(result){
+            case 'draw':
+                fontAwesomeIcon=`<i class="fas fa-equals"></i>`;
+                break;
+            case 'computer wins':
+                fontAwesomeIcon= `<i class="fas fa-robot"></i>`;
+                break;
+            case 'you win':
+                fontAwesomeIcon=`<i class="fas fa-hand-peace"></i>`;
+                break;
+            default:
+                throw new Error("Unexpected result value.", result);
+        }
+        innerItem=`${fontAwesomeIcon} <span style="font-family: monospace;" >${result}</span>`;
+        console.log(innerItem);
+    
+        return innerItem;
+    
     }
-    if(result==='draw'){
-        innerItem=`<i class="fas fa-equals"></i> <span style="font-family: monospace;" >${result}</span>`;
-        
+    
+    
+    
+    function displayBackgroundColor(backgroundColor){
+        document.body.style.backgroundColor=backgroundColor;
     }
-    else if(result==='computer wins'){
-        innerItem= `<i class="fas fa-robot"></i> <span style="font-family: monospace;" >${result}</span>`;
+    
+    
+    function updateResultView(result){
+        resultDisplay.textContent=result;
     }
-    else{
-        innerItem= `<i class="fas fa-hand-peace"></i> <span style="font-family: monospace;" >${result}</span>`;
-    }
-
-    console.log(innerItem);
-
-    return innerItem;
-
-}
-
-function displayBackgroundColor(backgroundColor){
-    document.body.style.backgroundColor=backgroundColor;
-}
 
 
-function updateResultView(result){
-    resultDisplay.textContent=result;
-}
+
 
 
  const launchRound=(event)=>{
@@ -186,17 +202,17 @@ let computerChoice;
 let playerChoice;
 
 
+
+
     hideComputerChoice();
 
-    computerChoice= ComputerModel.getComputerChoice();
-    playerChoice=PlayerModel.getPlayerChoice(event);
-
-
+    computerChoice= ComputerModel.getChoice();
+    playerChoice=PlayerModel.getChoice(event);
 
     roundResult= GameModel.getRoundResult(computerChoice, playerChoice);
     displayComputerChoice(computerChoice);
     updateResultView(roundResult);
-    displayBackgroundColor(getBackgroundColor(roundResult));
+    displayBackgroundColor(GameModel.getBackgroundColor(roundResult));
     const resultItem = document.createElement("li");
     resultItem.innerHTML=getLogInnerItem(roundResult);
     logResults.prepend(resultItem);
