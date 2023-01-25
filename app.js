@@ -10,41 +10,48 @@ const scissorsLight=document.querySelector('#scissors-cpu');
 const ROCK='ROCK';
 const PAPER ='PAPER';
 const SCISSORS ='SCISSORS';
-
-let computerChoice;
-let playerChoice;
-
-
 const DEFAULT_CHOICE=ROCK;
-const choiceEnumeration=[ROCK, PAPER, SCISSORS];
+
+const CHOICE=[ROCK, PAPER, SCISSORS];
+
 
 const resultDisplay=document.querySelector('.result');
 
-
-
-function getRandomChoice(){
-    const randomNumber=Math.floor(Math.random()*choiceEnumeration.length);
-    return randomNumber;
-} 
-
-
-const getPlayerChoice=(event)=>{
+class PlayerModel{
+/**
+ * @function getPlayerChoice
+ * @param {Event} event - The event object of the player's choice
+ * @returns {string} choice - The player's choice in uppercase
+ * @throws {Error} if there is an error retrieving the player's choice
+ */
+    static getPlayerChoice=(event)=>{
     
-    try{
-        console.log(typeof event.srcElement.id.toUpperCase());
-    let choice=event.srcElement.id.toUpperCase();
+        try{
+            console.log(typeof event.srcElement.id.toUpperCase());
+        let choice=event.srcElement.id.toUpperCase();
 
-     if(!choiceEnumeration.includes(choice)){
-        choice=getRandomChoice();
+            
+            console.log(choice);
+            
+            return choice;
+        
+        }
+        catch(error){
+            console.error(error);
+        }
     }
-    else{
-        console.log(choice);
-        getComputerChoice()
-        return choice;
-    }
-    }
-    catch(error){
-        console.error(error);
+}
+
+
+class ComputerModel{
+    
+    static getRandomChoice(){
+        const randomNumber=Math.floor(Math.random()*CHOICE.length);
+        return randomNumber;
+    } 
+    static getComputerChoice=()=>{
+       
+        return CHOICE[this.getRandomChoice()];
     }
 }
 
@@ -68,16 +75,22 @@ function displayComputerChoice(choice){
     break;
     }
 }
+class GameModel{
+/**
+     * @function getRoundResult
+     * @param {string} computer - the computer choice
+     * @param {string} player - the player choice
+     * @returns {string} roundResult - the result of the round
+     * @throws {Error} if computer or player choice is falsy
+     */  
 
-function updateRoundResult(computer, player){
+static getRoundResult(computer, player){
     let roundResult;
     if(!computer){
-        console.log("computer choice falsy", computer);
-        return;
+        throw new Error("computer choice is falsy");
     }
     if(!player){
-        console.log("player choice falsy", player);
-        return;
+        throw new Error("player choice is falsy");
     }
     if(computer === player){
         roundResult = "draw";
@@ -89,9 +102,10 @@ function updateRoundResult(computer, player){
         roundResult = "you win";
     }
     else {
-        console.log("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
+        console.error("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
     }
     return roundResult;
+}
 }
 function getBackgroundColor(result){
     const DRAW_COLOR='#ffffff';
@@ -99,7 +113,7 @@ function getBackgroundColor(result){
     const PLAYER_WINS_COLOR='#82C00F';
 
     if(!result){
-        console.log("result falsy : null or not define.", typeof result);
+        console.log("result falsy : null or not defined.", typeof result);
         return;
     }
 
@@ -149,21 +163,22 @@ function updateResultView(result){
     resultDisplay.textContent=result;
 }
 
-const getComputerChoice=()=>{
 
-   return choiceEnumeration[getRandomChoice()];
-}
  const launchRound=(event)=>{
 let roundResult;
 
+let computerChoice;
+let playerChoice;
+
+
     hideComputerChoice();
 
-    computerChoice= getComputerChoice();
-    playerChoice=getPlayerChoice(event);
+    computerChoice= ComputerModel.getComputerChoice();
+    playerChoice=PlayerModel.getPlayerChoice(event);
 
-    displayComputerChoice(computerChoice);
 
-    roundResult= updateRoundResult(computerChoice, playerChoice);
+
+    roundResult= GameModel.getRoundResult(computerChoice, playerChoice);
     displayComputerChoice(computerChoice);
     updateResultView(roundResult);
     displayBackgroundColor(getBackgroundColor(roundResult));
