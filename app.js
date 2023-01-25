@@ -27,8 +27,8 @@ class PlayerModel{
     static getPlayerChoice=(event)=>{
     
         try{
-            console.log(typeof event.srcElement.id.toUpperCase());
-        let choice=event.srcElement.id.toUpperCase();
+            console.log(typeof event.target.id.toUpperCase());
+        let choice=event.target.id.toUpperCase();
 
             
             console.log(choice);
