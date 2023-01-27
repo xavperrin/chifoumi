@@ -55,7 +55,7 @@ describe("app.js", ()=>{
               it('should throw an error when player choice is falsy', () => {
                 expect(() => GameModel.getRoundResult('ROCK', null)).toThrow(new Error("player choice is falsy"));
               });
-              it('should throw an error when player or computer choice is an unexpected value', () => {
+              it('should throw an error when player or computer choice is an unexpected value (e.g. 42)', () => {
                 expect(() => GameModel.getRoundResult('42', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
               });
             });
@@ -90,7 +90,7 @@ describe("app.js", ()=>{
                   expect(console.error).toHaveBeenCalledWith('error:', new Error('result falsy : null or not defined.', typeof result));
                   });
 
-                  it('should call console.error when result is an unexpected value', () => {
+                  it('should call console.error when result is an unexpected value (e.g. FOOBAR)', () => {
                     GameModel.getBackgroundColor("FOOBAR");
                     expect(console.error).toHaveBeenCalledWith('error:', new Error('Unexpected result value'));
                     });

@@ -61,9 +61,6 @@ class ComputerModel{
     }
 }
 
-
-
-
 class GameModel{
 /**
      * @function getRoundResult
@@ -229,5 +226,3 @@ let playerChoice;
 rockBtn.addEventListener('click', launchRound);
 paperBtn.addEventListener('click', launchRound);
 scissorsBtn.addEventListener('click', launchRound);
-
-
