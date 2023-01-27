@@ -22,7 +22,7 @@ describe("app.js", ()=>{
       
           it('should throw an error if there is an error retrieving the player choice', () => {
             const event = { target: {} };
-            const errorMessage = `Cannot read property id of undefined`;
+            const errorMessage = `Cannot read properties of undefined (reading 'toUpperCase')`;
             expect(() => PlayerModel.getChoice(event)).toThrowError(errorMessage);
           });
         });
@@ -55,9 +55,15 @@ describe("app.js", ()=>{
               it('should throw an error when player choice is falsy', () => {
                 expect(() => GameModel.getRoundResult('ROCK', null)).toThrow(new Error("player choice is falsy"));
               });
+              it('should throw an error when player or computer choice is an unexpected value', () => {
+                expect(() => GameModel.getRoundResult('42', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
+              });
             });
 
             describe('getBackgroundColor', () => {
+              beforeEach(() => {
+                spyOn(console, 'error'); //espionner la methode error de console
+              });
                 it('should return the color code for a draw result', () => {
                   const result = 'draw';
                   const expectedColor = COLOR.DRAW;
@@ -79,12 +85,18 @@ describe("app.js", ()=>{
                   expect(color).toEqual(expectedColor);
                 });
               
-                it('should throw an error if result is falsy', () => {
-                    const result = null;
-                    const errorMessage = 'result falsy : null or not defined.';
-                    expect(() => GameModel.getBackgroundColor(result)).toThrowError(errorMessage);
+                it('should call console.error when result is falsy', () => {
+                  GameModel.getBackgroundColor(null);
+                  expect(console.error).toHaveBeenCalledWith('error:', new Error('result falsy : null or not defined.', typeof result));
                   });
-              });   
+
+                  it('should call console.error when result is an unexpected value', () => {
+                    GameModel.getBackgroundColor("FOOBAR");
+                    expect(console.error).toHaveBeenCalledWith('error:', new Error('Unexpected result value'));
+                    });
+              }); 
+              
+              
 });
 
 

@@ -31,27 +31,20 @@ const resultDisplay=document.querySelector('.result');
 
 class PlayerModel{
 /**
- * @function getPlayerChoice
+ * @function getChoice
  * @param {Event} event - The event object of the player's choice
  * @returns {string} choice - The player's choice in uppercase
- * @throws {Error} if there is an error retrieving the player's choice
  */
     static getChoice=(event)=>{
     
-        try{
-            console.log(typeof event.target.id.toUpperCase());
+        console.log(typeof event.target.id.toUpperCase());
         let choice=event.target.id.toUpperCase();
 
             
             console.log(choice);
             
             return choice;
-        
-        }
-        catch(error){
-            console.error(error);
-            throw new Error(`Cannot read property id of undefined`);
-        }
+
     }
 }
 
@@ -99,6 +92,7 @@ static getRoundResult(computer, player){
         }
         else {
             console.error("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
+            throw new Error("Unexpected value of player or computer choice.");
         }
         return roundResult;
     }
@@ -107,9 +101,19 @@ static getRoundResult(computer, player){
  * @function getBackgroundColor
  * @param {string} result - The result of a round. Can be 'draw', 'computer wins', or 'you win'
  * @returns {string} colorCode - The color code corresponding to the round result.
- * @throws {Error} if result round is falsy
  */
    static getBackgroundColor(result){
+
+    try{
+        return this.getColor(result);
+    } catch(e){
+        console.error("error:", e);
+        }
+    }
+
+    
+    static getColor(result)
+    {
         if(!result){
             throw new Error("result falsy : null or not defined.", typeof result);
         }
@@ -126,7 +130,9 @@ static getRoundResult(computer, player){
             default:
                 throw new Error("Unexpected result value", result);
         }
+
     }
+
 }
 
 function    hideComputerChoice(){
