@@ -42,7 +42,7 @@ class PlayerModel{
 
             
             console.log(choice);
-            
+            document.dispatchEvent(new CustomEvent("playerChoiceMade", { detail: choice }));
             return choice;
 
     }
@@ -51,14 +51,75 @@ class PlayerModel{
 
 class ComputerModel{
     
-    static getRandomChoice(){
+
+    constructor() {
+        if (ComputerModel._instance) {
+            return ComputerModel._instance
+          }
+          ComputerModel._instance = this;
+        this.userHistory = new Map();
+    }
+
+    static getRandomNumber(){
         const randomNumber=Math.floor(Math.random()*CHOICE.length);
         return randomNumber;
     } 
-    static getChoice=()=>{
+
+
+
+    static getRandomChoice=()=>{
        
-        return CHOICE[this.getRandomChoice()];
+        return CHOICE[this.getRandomNumber()];
     }
+
+
+
+
+    getComputerChoice() {
+        let userChoice;
+        if (this.userHistory.size === 0) {
+            userChoice = ComputerModel.getRandomChoice();
+        } else {
+            let maxCount = 0;
+            for (let key of this.userHistory.keys()) {
+                if (this.userHistory.get(key) > maxCount) {
+                    maxCount = this.userHistory.get(key);
+                    userChoice = key;
+                }
+            }
+        }
+
+        let computerChoice;
+        if (userChoice === ROCK) {
+            computerChoice = PAPER;
+        } else if (userChoice === PAPER) {
+            computerChoice = SCISSORS;
+        } else {
+            computerChoice = ROCK;
+        }
+        return computerChoice;
+    }
+
+    updateUserHistory(choice) {
+        if (!this.userHistory.has(choice)) {
+            this.userHistory.set(choice, 1);
+        } else {
+            let amount=this.userHistory.get(choice);
+            amount++;
+            this.userHistory.set(choice, amount);
+            
+        }
+    }
+
+    listenToPlayerChoice() {
+        // Ecouter l'événement personalisé pour mettre à jour l'historique
+        document.addEventListener("playerChoiceMade", (event) => {
+            this.updateUserHistory(event.detail);
+        });
+
+    }
+    
+    
 }
 
 class GameModel{
@@ -73,10 +134,13 @@ class GameModel{
 static getRoundResult(computer, player){
         let roundResult;
         if(!computer){
-            throw new Error("computer choice is falsy", typeof computer);
+            throw new TypeError("computer choice is falsy", typeof computer);
         }
         if(!player){
-            throw new Error("player choice is falsy", typeof player);
+            throw new TypeError("player choice is falsy", typeof player);
+        }
+        if(typeof player!=='string'||typeof computer!=='string'){
+            throw new TypeError(`Wrong type given`);
         }
         if(computer === player){
             roundResult = "draw";
@@ -89,6 +153,7 @@ static getRoundResult(computer, player){
         }
         else {
             console.error("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
+            roundResult = "unexpected value";
             throw new Error("Unexpected value of player or computer choice.");
         }
         return roundResult;
@@ -208,8 +273,9 @@ let playerChoice;
 
 
     hideComputerChoice();
-
-    computerChoice= ComputerModel.getChoice();
+    const computer=new ComputerModel();
+    computer.listenToPlayerChoice();
+    computerChoice= computer.getComputerChoice();
     playerChoice=PlayerModel.getChoice(event);
 
     roundResult= GameModel.getRoundResult(computerChoice, playerChoice);
@@ -218,7 +284,7 @@ let playerChoice;
     displayBackgroundColor(GameModel.getBackgroundColor(roundResult));
     const resultItem = document.createElement("li");
     resultItem.innerHTML=getLogInnerItem(roundResult);
-    logResults.prepend(resultItem);
+    logResults.prepend(resultItem); 
 };
 
 

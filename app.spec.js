@@ -1,9 +1,9 @@
 describe("app.js", ()=>{
     describe("ComputerModel", ()=>{
-            describe("getRandomChoice static method", ()=> {
+            describe("getRandomNumber static method", ()=> {
                 it("should return a number between 0 and 2", ()=> {
                 for (let i = 0; i < 100; i++) {
-                    let randomChoice = ComputerModel.getRandomChoice();
+                    let randomChoice = ComputerModel.getRandomNumber();
                     expect(randomChoice).toBeGreaterThanOrEqual(0);
                     expect(randomChoice).toBeLessThan(3);
                 }
@@ -55,8 +55,10 @@ describe("app.js", ()=>{
               it('should throw an error when player choice is falsy', () => {
                 expect(() => GameModel.getRoundResult('ROCK', null)).toThrow(new Error("player choice is falsy"));
               });
-              it('should throw an error when player or computer choice is an unexpected value (e.g. 42)', () => {
-                expect(() => GameModel.getRoundResult('42', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
+              it('should throw an error when player or computer choice is an unexpected value (e.g. FOOBAR or 42)', () => {
+                
+                expect(() => GameModel.getRoundResult('FOOBAR', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
+                expect(() => GameModel.getRoundResult(42, 'ROCK')).toThrow(new TypeError(`Wrong type given`));
               });
             });
 
