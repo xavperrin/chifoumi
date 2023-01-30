@@ -1,16 +1,24 @@
 describe("app.js", ()=>{
     describe("ComputerModel", ()=>{
-            describe("getRandomChoice static method", ()=> {
+      let computerModel1, computerModel2;
+
+beforeEach(function() {
+computerModel1 = new ComputerModel();
+computerModel2 = new ComputerModel();
+});
+it('should implements singleton design pattern : only one instance implies all  refers to the same instance', function() {
+  expect(computerModel1).toEqual(computerModel2);
+  });
+            describe("getRandomNumber static method", ()=> {
                 it("should return a number between 0 and 2", ()=> {
                 for (let i = 0; i < 100; i++) {
-                    let randomChoice = ComputerModel.getRandomChoice();
-                    expect(randomChoice).toBeGreaterThanOrEqual(0);
-                    expect(randomChoice).toBeLessThan(3);
+                    let randomNumber = ComputerModel.getRandomNumber();
+                    expect(randomNumber).toBeGreaterThanOrEqual(0);
+                    expect(randomNumber).toBeLessThan(3);
                 }
             });
         });
     });
-
     describe('PlayerModel', () => {
         describe('getChoice', () => {
           it('should return the player choice in uppercase', () => {
@@ -55,8 +63,10 @@ describe("app.js", ()=>{
               it('should throw an error when player choice is falsy', () => {
                 expect(() => GameModel.getRoundResult('ROCK', null)).toThrow(new Error("player choice is falsy"));
               });
-              it('should throw an error when player or computer choice is an unexpected value', () => {
-                expect(() => GameModel.getRoundResult('42', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
+              it('should throw an error when player or computer choice is an unexpected value (e.g. FOOBAR or 42)', () => {
+                
+                expect(() => GameModel.getRoundResult('FOOBAR', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
+                expect(() => GameModel.getRoundResult(42, 'ROCK')).toThrow(new TypeError(`Wrong type given`));
               });
             });
 
@@ -90,9 +100,11 @@ describe("app.js", ()=>{
                   expect(console.error).toHaveBeenCalledWith('error:', new Error('result falsy : null or not defined.', typeof result));
                   });
 
-                  it('should call console.error when result is an unexpected value', () => {
-                    GameModel.getBackgroundColor("FOOBAR");
-                    expect(console.error).toHaveBeenCalledWith('error:', new Error('Unexpected result value'));
+                  it('should return the color code for an unexpected value (e.g. FOOBAR)', () => {
+                    const result = 'FOOBAR';
+                  const expectedColor = COLOR.UNEXPECTED;
+                  const color = GameModel.getBackgroundColor(result);
+                  expect(color).toEqual(expectedColor);
                     });
               }); 
               
