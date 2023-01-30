@@ -23,7 +23,8 @@ const CHOICE=[ROCK, PAPER, SCISSORS];
 const COLOR = {
     DRAW : '#ffffff',
     COMPUTER_WINS : '#FE2F60',
-    PLAYER_WINS : '#82C00F'
+    PLAYER_WINS : '#82C00F',
+    UNEXPECTED:'orange'
   }
 
 
@@ -59,14 +60,20 @@ class ComputerModel{
           ComputerModel._instance = this;
         this.userHistory = new Map();
     }
-
+/**
+ * 
+ * @returns {number} between [0,2]
+ */
     static getRandomNumber(){
         const randomNumber=Math.floor(Math.random()*CHOICE.length);
         return randomNumber;
     } 
 
 
-
+/**
+ * 
+ * @returns {string} ROCK, PAPER or SCISSORS  
+ */
     static getRandomChoice=()=>{
        
         return CHOICE[this.getRandomNumber()];
@@ -74,8 +81,11 @@ class ComputerModel{
 
 
 
-
-    getComputerChoice() {
+/**
+ * 
+ * @returns {string} ROCK, PAPER or SCISSORS 
+ */
+    getChoice() {
         let userChoice;
         if (this.userHistory.size === 0) {
             userChoice = ComputerModel.getRandomChoice();
@@ -99,18 +109,22 @@ class ComputerModel{
         }
         return computerChoice;
     }
-
+/**
+ * 
+ * @param {string} choice 
+ */
     updateUserHistory(choice) {
         if (!this.userHistory.has(choice)) {
             this.userHistory.set(choice, 1);
         } else {
             let amount=this.userHistory.get(choice);
             amount++;
-            this.userHistory.set(choice, amount);
-            
+            this.userHistory.set(choice, amount);    
         }
     }
-
+/**
+ * 
+ */
     listenToPlayerChoice() {
         // Ecouter l'événement personalisé pour mettre à jour l'historique
         document.addEventListener("playerChoiceMade", (event) => {
@@ -173,7 +187,11 @@ static getRoundResult(computer, player){
         }
     }
 
-    
+    /**
+     * 
+     * @param {string} result
+     * @returns {string} hexadecimal color.
+     */
     static getColor(result)
     {
         if(!result){
@@ -190,7 +208,7 @@ static getRoundResult(computer, player){
                 return COLOR.PLAYER_WINS;
                 break;
             default:
-                throw new Error("Unexpected result value", result);
+                return COLOR.UNEXPECTED;
         }
 
     }
@@ -263,7 +281,7 @@ function    hideComputerChoice(){
 
 
 
- const launchRound=(event)=>{
+const launchRound=(event)=>{
 let roundResult;
 
 let computerChoice;
@@ -273,18 +291,22 @@ let playerChoice;
 
 
     hideComputerChoice();
-    const computer=new ComputerModel();
+    const computer=new ComputerModel;
     computer.listenToPlayerChoice();
-    computerChoice= computer.getComputerChoice();
+    computerChoice= computer.getChoice();
     playerChoice=PlayerModel.getChoice(event);
-
+try{
     roundResult= GameModel.getRoundResult(computerChoice, playerChoice);
+
     displayComputerChoice(computerChoice);
     updateResultView(roundResult);
     displayBackgroundColor(GameModel.getBackgroundColor(roundResult));
     const resultItem = document.createElement("li");
     resultItem.innerHTML=getLogInnerItem(roundResult);
     logResults.prepend(resultItem); 
+} catch(error){
+    console.error(error);
+};
 };
 
 
