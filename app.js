@@ -24,7 +24,6 @@ const COLOR = {
     DRAW : '#ffffff',
     COMPUTER_WINS : '#FE2F60',
     PLAYER_WINS : '#82C00F',
-    UNEXPECTED:'orange'
   }
 
 
@@ -56,8 +55,8 @@ class ComputerModel{
     constructor() {
         if (ComputerModel._instance) {
             return ComputerModel._instance
-          }
-          ComputerModel._instance = this;
+        }
+        ComputerModel._instance = this;
         this.userHistory = new Map();
     }
 /**
@@ -75,40 +74,43 @@ class ComputerModel{
  * @returns {string} ROCK, PAPER or SCISSORS  
  */
     static getRandomChoice=()=>{
-       
         return CHOICE[this.getRandomNumber()];
     }
+/**
+ * @function getAntagonist
+ * @param {string} choice : ROCK, PAPER or SCISSORS 
+ * @returns {string} choice : ROCK, PAPER or SCISSORS 
+ */
 
-
+    static getAntagonist(choice){
+        let antagonist;
+        if(!choice){
+            throw new TypeError(`choice is falsy: ${choice}`);
+        }
+        if (choice === ROCK) {
+            antagonist = PAPER;
+        } else if (choice === PAPER) {
+            antagonist = SCISSORS;
+        } else if (choice=== SCISSORS) {
+            antagonist = ROCK;
+        }
+        else{
+            throw new Error(`Unexpected choice. Can't determine antagonist choice for ${choice}`);
+        }
+        return antagonist;
+    }
 
 /**
  * 
  * @returns {string} ROCK, PAPER or SCISSORS 
  */
     getChoice() {
-        let userChoice;
-        if (this.userHistory.size === 0) {
-            userChoice = ComputerModel.getRandomChoice();
-        } else {
-            let maxCount = 0;
-            for (let key of this.userHistory.keys()) {
-                if (this.userHistory.get(key) > maxCount) {
-                    maxCount = this.userHistory.get(key);
-                    userChoice = key;
-                }
-            }
-        }
-
-        let computerChoice;
-        if (userChoice === ROCK) {
-            computerChoice = PAPER;
-        } else if (userChoice === PAPER) {
-            computerChoice = SCISSORS;
-        } else {
-            computerChoice = ROCK;
-        }
+        let userMostChosenWeapon=this.determineUserMostChosenWeapon();
+        let computerChoice=ComputerModel.getAntagonist(userMostChosenWeapon);
         return computerChoice;
     }
+
+    
 /**
  * 
  * @param {string} choice 
@@ -132,8 +134,26 @@ class ComputerModel{
         });
 
     }
-    
-    
+
+/**
+ * @returns {string} most chosen weapon by player according history log
+ * 
+ */
+    determineUserMostChosenWeapon(){
+        let mostChosenWeapon;
+        if (this.userHistory.size === 0) {
+            mostChosenWeapon = ComputerModel.getRandomChoice();
+        } else {
+            let maxCount = 0;
+            for (let key of this.userHistory.keys()) {
+                if (this.userHistory.get(key) > maxCount) {
+                    maxCount = this.userHistory.get(key);
+                    mostChosenWeapon = key;
+                }
+            }
+        }
+        return mostChosenWeapon;
+    }
 }
 
 class GameModel{
@@ -142,7 +162,8 @@ class GameModel{
      * @param {string} computer - the computer choice
      * @param {string} player - the player choice
      * @returns {string} roundResult - the result of the round
-     * @throws {Error} if computer or player choice is falsy
+     * @throws {TypeError} if computer choice is falsy
+     * @throws {TypeError} if player choice is falsy
      */  
 
 static getRoundResult(computer, player){
@@ -168,24 +189,14 @@ static getRoundResult(computer, player){
         else {
             console.error("something wrong happened.", "computer choice: ", computer, "player choice: ", player);
             roundResult = "unexpected value";
-            throw new Error("Unexpected value of player or computer choice.");
+            throw new Error("Unexpected value of player or computer choice");
         }
         return roundResult;
-    }
+    }   
 
-    /**
- * @function getBackgroundColor
- * @param {string} result - The result of a round. Can be 'draw', 'computer wins', or 'you win'
- * @returns {string} colorCode - The color code corresponding to the round result.
- */
-   static getBackgroundColor(result){
+}
 
-    try{
-        return this.getColor(result);
-    } catch(e){
-        console.error("error:", e);
-        }
-    }
+class GameView{
 
     /**
      * 
@@ -195,7 +206,7 @@ static getRoundResult(computer, player){
     static getColor(result)
     {
         if(!result){
-            throw new Error("result falsy : null or not defined.", typeof result);
+            throw new TypeError(`result falsy : ${result}`);
         }
         switch(result){
             case 'draw':
@@ -208,21 +219,32 @@ static getRoundResult(computer, player){
                 return COLOR.PLAYER_WINS;
                 break;
             default:
-                return COLOR.UNEXPECTED;
+                throw new Error(`Unexpected value of result : ${result}`);
         }
 
     }
 
-}
+        /**
+ * @function getBackgroundColor
+ * @param {string} result - The result of a round. Can be 'draw', 'computer wins', or 'you win'
+ * @returns {string} colorCode - The color code corresponding to the round result.
+ */
+   static getBackgroundColor(result){
 
-function    hideComputerChoice(){
+    try{
+        return this.getColor(result);
+    } catch(e){
+        console.error("error:", e);
+        }
+    }
+    static hideComputerChoice(){
         // Cacher tous les boutons au démarrage
         scissorsLight.style.visibility='hidden';
         paperLight.style.visibility='hidden';
         rockLight.style.visibility='hidden';
     }
-
-    function  displayComputerChoice(choice){
+    
+    static displayComputerChoice(choice){
 
         switch(choice){
         case ROCK:
@@ -237,7 +259,8 @@ function    hideComputerChoice(){
         }
     }
 
-    function getLogInnerItem(result){
+
+    static getLogInnerItem(result){
     
         let innerItem;
         let fontAwesomeIcon;
@@ -265,18 +288,20 @@ function    hideComputerChoice(){
         return innerItem;
     
     }
-    
-    
-    
-    function displayBackgroundColor(backgroundColor){
+
+
+    static displayBackgroundColor(backgroundColor){
         document.body.style.backgroundColor=backgroundColor;
     }
     
     
-    function updateResultView(result){
+    static updateResultView(result){
         resultDisplay.textContent=result;
     }
+    
+    
 
+}
 
 
 
@@ -289,20 +314,20 @@ let playerChoice;
 
 
 
-
-    hideComputerChoice();
+try{
+    GameView.hideComputerChoice();
     const computer=new ComputerModel;
     computer.listenToPlayerChoice();
     computerChoice= computer.getChoice();
     playerChoice=PlayerModel.getChoice(event);
-try{
+
     roundResult= GameModel.getRoundResult(computerChoice, playerChoice);
 
-    displayComputerChoice(computerChoice);
-    updateResultView(roundResult);
-    displayBackgroundColor(GameModel.getBackgroundColor(roundResult));
+    GameView.displayComputerChoice(computerChoice);
+    GameView.updateResultView(roundResult);
+    GameView.displayBackgroundColor(GameView.getBackgroundColor(roundResult));
     const resultItem = document.createElement("li");
-    resultItem.innerHTML=getLogInnerItem(roundResult);
+    resultItem.innerHTML=GameView.getLogInnerItem(roundResult);
     logResults.prepend(resultItem); 
 } catch(error){
     console.error(error);

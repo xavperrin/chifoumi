@@ -9,7 +9,7 @@ computerModel2 = new ComputerModel();
 it('should implements singleton design pattern : only one instance implies all  refers to the same instance', function() {
   expect(computerModel1).toEqual(computerModel2);
   });
-            describe("getRandomNumber static method", ()=> {
+        describe("getRandomNumber static method", ()=> {
                 it("should return a number between 0 and 2", ()=> {
                 for (let i = 0; i < 100; i++) {
                     let randomNumber = ComputerModel.getRandomNumber();
@@ -17,6 +17,29 @@ it('should implements singleton design pattern : only one instance implies all  
                     expect(randomNumber).toBeLessThan(3);
                 }
             });
+        });
+        describe("getAntagonist static method", ()=>{
+          it('should return ROCK when choice parameter is SCISSORS', () => {
+            expect(ComputerModel.getAntagonist('SCISSORS')).toBe('ROCK');
+          });
+          it('should return PAPER when choice parameter is ROCK', () => {
+            expect(ComputerModel.getAntagonist('ROCK')).toBe('PAPER');
+          });
+          it('should return SCISSORS when choice parameter is PAPER', () => {
+            expect(ComputerModel.getAntagonist('PAPER')).toBe('SCISSORS');
+          });
+          it('should throw an error when choice parameter is falsy (i.e: null or undefined)', ()=>{
+            let undefinedChoice;
+            expect(()=>ComputerModel.getAntagonist(undefinedChoice)).toThrow(new TypeError(`choice is falsy: ${undefinedChoice}`))
+            let nullChoice=null
+            expect(()=>ComputerModel.getAntagonist(nullChoice)).toThrow(new TypeError(`choice is falsy: ${nullChoice}`))
+          } );
+          it('should throw an error when choice parameter is an unexpected value (e.g. 42 or FOOBAR) ', ()=>{
+            let unexpectedChoice='FOOBAR';
+            expect(()=>ComputerModel.getAntagonist(unexpectedChoice)).toThrow(new Error(`Unexpected choice. Can't determine antagonist choice for ${unexpectedChoice}`))
+            
+          } );
+
         });
     });
     describe('PlayerModel', () => {
@@ -65,54 +88,56 @@ it('should implements singleton design pattern : only one instance implies all  
               });
               it('should throw an error when player or computer choice is an unexpected value (e.g. FOOBAR or 42)', () => {
                 
-                expect(() => GameModel.getRoundResult('FOOBAR', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice."));
+                expect(() => GameModel.getRoundResult('FOOBAR', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice"));
                 expect(() => GameModel.getRoundResult(42, 'ROCK')).toThrow(new TypeError(`Wrong type given`));
               });
             });
+});
 
-            describe('getBackgroundColor', () => {
-              beforeEach(() => {
-                spyOn(console, 'error'); //espionner la methode error de console
-              });
-                it('should return the color code for a draw result', () => {
-                  const result = 'draw';
-                  const expectedColor = COLOR.DRAW;
-                  const color = GameModel.getBackgroundColor(result);
-                  expect(color).toEqual(expectedColor);
-                });
-              
-                it('should return the color code for a computer win result', () => {
-                  const result = 'computer wins';
-                  const expectedColor = COLOR.COMPUTER_WINS;
-                  const color = GameModel.getBackgroundColor(result);
-                  expect(color).toEqual(expectedColor);
-                });
-              
-                it('should return the color code for a player win result', () => {
-                  const result = 'you win';
-                  const expectedColor = COLOR.PLAYER_WINS;
-                  const color = GameModel.getBackgroundColor(result);
-                  expect(color).toEqual(expectedColor);
-                });
-              
-                it('should call console.error when result is falsy', () => {
-                  GameModel.getBackgroundColor(null);
-                  expect(console.error).toHaveBeenCalledWith('error:', new Error('result falsy : null or not defined.', typeof result));
-                  });
+describe("GameView", ()=>{
+  describe('getBackgroundColor', () => {
+    beforeEach(() => {
+      spyOn(console, 'error'); //espionner la methode error de console
+    });
+      it('should return the color code for a draw result', () => {
+        const result = 'draw';
+        const expectedColor = COLOR.DRAW;
+        const color = GameView.getBackgroundColor(result);
+        expect(color).toEqual(expectedColor);
+      });
+    
+      it('should return the color code for a computer win result', () => {
+        const result = 'computer wins';
+        const expectedColor = COLOR.COMPUTER_WINS;
+        const color = GameView.getBackgroundColor(result);
+        expect(color).toEqual(expectedColor);
+      });
+    
+      it('should return the color code for a player win result', () => {
+        const result = 'you win';
+        const expectedColor = COLOR.PLAYER_WINS;
+        const color = GameView.getBackgroundColor(result);
+        expect(color).toEqual(expectedColor);
+      });
+    
+      it('should call console.error when result is falsy', () => {
+        let nullResult=null;
+        GameView.getBackgroundColor(nullResult);
+        expect(console.error).toHaveBeenCalledWith('error:', new TypeError(`result falsy : ${nullResult}`));
+        });
 
-                  it('should return the color code for an unexpected value (e.g. FOOBAR)', () => {
-                    const result = 'FOOBAR';
-                  const expectedColor = COLOR.UNEXPECTED;
-                  const color = GameModel.getBackgroundColor(result);
-                  expect(color).toEqual(expectedColor);
-                    });
-              }); 
-              
-              
+        it('should call console.error when result has an unexpected value (e.g. FOOBAR)', () => {
+          const unexpectedResult = 'FOOBAR';
+        
+        GameView.getBackgroundColor(unexpectedResult);
+        expect(console.error).toHaveBeenCalledWith('error:', new Error(`Unexpected value of result : ${unexpectedResult}`));
+          });
+    }); 
+    
+
+
 });
 
 
 
-
-
-})
+});
