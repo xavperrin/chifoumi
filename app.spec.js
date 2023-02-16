@@ -1,7 +1,6 @@
 describe("app.js", ()=>{
     describe("ComputerModel", ()=>{
       let computerModel1, computerModel2;
-
 beforeEach(function() {
 computerModel1 = new ComputerModel();
 computerModel2 = new ComputerModel();
@@ -10,6 +9,7 @@ it('should implements singleton design pattern : only one instance implies all  
   expect(computerModel1).toEqual(computerModel2);
   });
         describe("getRandomNumber static method", ()=> {
+          
                 it("should return a number between 0 and 2", ()=> {
                 for (let i = 0; i < 100; i++) {
                     let randomNumber = ComputerModel.getRandomNumber();
@@ -31,7 +31,7 @@ it('should implements singleton design pattern : only one instance implies all  
           it('should throw an error when choice parameter is falsy (i.e: null or undefined)', ()=>{
             let undefinedChoice;
             expect(()=>ComputerModel.getAntagonist(undefinedChoice)).toThrow(new TypeError(`choice is falsy: ${undefinedChoice}`))
-            let nullChoice=null
+            let nullChoice=null;
             expect(()=>ComputerModel.getAntagonist(nullChoice)).toThrow(new TypeError(`choice is falsy: ${nullChoice}`))
           } );
           it('should throw an error when choice parameter is an unexpected value (e.g. 42 or FOOBAR) ', ()=>{
@@ -39,7 +39,6 @@ it('should implements singleton design pattern : only one instance implies all  
             expect(()=>ComputerModel.getAntagonist(unexpectedChoice)).toThrow(new Error(`Unexpected choice. Can't determine antagonist choice for ${unexpectedChoice}`))
             
           } );
-
         });
     });
     describe('PlayerModel', () => {
@@ -58,7 +57,6 @@ it('should implements singleton design pattern : only one instance implies all  
           });
         });
       });
-
     describe("GameModel", ()=>{
         describe('getRoundResult', () => {
             it('should return "draw" when player and computer choices are the same', () => {
@@ -81,17 +79,16 @@ it('should implements singleton design pattern : only one instance implies all  
             
             it('should throw an error when computer choice is falsy', () => {
                 expect(() => GameModel.getRoundResult(undefined, 'ROCK')).toThrow(new Error("computer choice is falsy"));
-              });
-              
-              it('should throw an error when player choice is falsy', () => {
-                expect(() => GameModel.getRoundResult('ROCK', null)).toThrow(new Error("player choice is falsy"));
-              });
-              it('should throw an error when player or computer choice is an unexpected value (e.g. FOOBAR or 42)', () => {
-                
-                expect(() => GameModel.getRoundResult('FOOBAR', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice"));
-                expect(() => GameModel.getRoundResult(42, 'ROCK')).toThrow(new TypeError(`Wrong type given`));
-              });
             });
+              
+            it('should throw an error when player choice is falsy', () => {
+            expect(() => GameModel.getRoundResult('ROCK', null)).toThrow(new Error("player choice is falsy"));
+            });
+            it('should throw an error when player or computer choice is an unexpected value (e.g. FOOBAR or 42)', () => {
+            expect(() => GameModel.getRoundResult('FOOBAR', 'ROCK')).toThrow(new Error("Unexpected value of player or computer choice"));
+            expect(() => GameModel.getRoundResult(42, 'ROCK')).toThrow(new TypeError(`Wrong type given`));
+            });
+    });
 });
 
 describe("GameView", ()=>{
@@ -105,7 +102,6 @@ describe("GameView", ()=>{
         const color = GameView.getBackgroundColor(result);
         expect(color).toEqual(expectedColor);
       });
-    
       it('should return the color code for a computer win result', () => {
         const result = 'computer wins';
         const expectedColor = COLOR.COMPUTER_WINS;
@@ -119,13 +115,11 @@ describe("GameView", ()=>{
         const color = GameView.getBackgroundColor(result);
         expect(color).toEqual(expectedColor);
       });
-    
       it('should call console.error when result is falsy', () => {
         let nullResult=null;
         GameView.getBackgroundColor(nullResult);
         expect(console.error).toHaveBeenCalledWith('error:', new TypeError(`result falsy : ${nullResult}`));
         });
-
         it('should call console.error when result has an unexpected value (e.g. FOOBAR)', () => {
           const unexpectedResult = 'FOOBAR';
         
@@ -133,11 +127,5 @@ describe("GameView", ()=>{
         expect(console.error).toHaveBeenCalledWith('error:', new Error(`Unexpected value of result : ${unexpectedResult}`));
           });
     }); 
-    
-
-
 });
-
-
-
 });

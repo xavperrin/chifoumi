@@ -28,26 +28,24 @@ const COLOR = {
 
 
 const resultDisplay=document.querySelector('.result');
-
 class PlayerModel{
-/**
- * @function getChoice
- * @param {Event} event - The event object of the player's choice
- * @returns {string} choice - The player's choice in uppercase
- */
-    static getChoice=(event)=>{
+    /**
+     * @function getChoice
+     * @param {Event} event - The event object of the player's choice
+     * @returns {string} choice - The player's choice in uppercase
+     */
+        static getChoice=(event)=>{
+        
+            console.log(typeof event.target.id.toUpperCase());
+            let choice=event.target.id.toUpperCase();
     
-        console.log(typeof event.target.id.toUpperCase());
-        let choice=event.target.id.toUpperCase();
-
-            
-            console.log(choice);
-            document.dispatchEvent(new CustomEvent("playerChoiceMade", { detail: choice }));
-            return choice;
-
+                
+                console.log(choice);
+                document.dispatchEvent(new CustomEvent("playerChoiceMade", { detail: choice }));
+                return choice;
+    
+        }
     }
-}
-
 
 class ComputerModel{
     
@@ -319,7 +317,7 @@ try{
     const computer=new ComputerModel;
     computer.listenToPlayerChoice();
     computerChoice= computer.getChoice();
-    playerChoice=PlayerModel.getChoice(event);
+    playerChoice=player.PlayerModel.getChoice(event);
 
     roundResult= GameModel.getRoundResult(computerChoice, playerChoice);
 
